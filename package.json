@@ -2,14 +2,23 @@
   "name": "ef1ch",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Ivan Bobarini",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^10.0.0",
     "express": "^4.17.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lenciades/ef1ch.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Lenciades/ef1ch/issues"
+  },
+  "homepage": "https://github.com/Lenciades/ef1ch#readme"
 }
