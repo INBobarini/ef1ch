@@ -3,9 +3,9 @@ const productos = require('../api/productos')
 
 routerProd = express.Router();
 
-const administrador = true;
 const auth = function (req, res, next) {
-    if (req.body.administrador !== "true") {
+    const administrador = true;
+    if (administrador !== true ) {
         res.status(401).send({ error: -1, descripcion: `ruta ${req.originalUrl} metodo ${req.method} no autorizada` })
     } else {
         next();

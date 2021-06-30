@@ -1,6 +1,8 @@
-const listado = require("./productos") //listado es un array, instancia de clase Producto
+const persistencia = require('../persistencia/persistencia') //listado es un array, instancia de clase Producto
+//const listado = persistencia.leer('../persistencia/productos.txt');
 let proxIdCarrito = 0;
 const carritos = [];
+
 class Carrito {
     constructor(){
         this.id = ++proxIdCarrito;
@@ -8,18 +10,16 @@ class Carrito {
         this.productos = [];
     }
     listar(idCarrito){ //no entiendo, un usuario tiene un unico carrito... tomo como id de carrito la posicion del producto, o sea que este metodo lista productos dentro de un carrito
-        if(idCarrito == "undefined"){//si no recibe indice devuelve el array de productos en carrito
+        if(!carrito.productos.length) return {error:"carrito sin productos"}
+        
+        if(idCarrito == undefined){//si no recibe indice devuelve el array de productos en carrito
             return this.productos; 
-        }
-        if(typeof idCarrito != "number" || idCarrito < carrito.length){
-            return {error: "indice incorrecto"}
+        
         }
         return this.productos[idCarrito-1]
     }
     agregar(idProducto){         
         //this.productos.push(listado.find(e => e.id == idProducto))
-        let indexCarrito = carritos.findIndex(e => e.id == carrito.id)
-        //return carritos.splice(indexCarrito-1, 1, this) //al cambiar un carrito, se actualiza el arreglo de carritos
     }
     borrar(idCarrito){
         return this.productos.splice(idCarrito-1,1)
