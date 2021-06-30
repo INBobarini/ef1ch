@@ -1,6 +1,6 @@
 let proxIdProducto = 0;
-const persistencia = require("../persistencia/persistencia"); 
-let productos = persistencia.leer();
+const persistencia = require('../persistencia/persistencia') 
+let productos = []//persistencia.leer();
 class Producto {
     
     constructor(){
@@ -18,7 +18,7 @@ class Producto {
         }
         Object.assign(nuevoProducto, producto);
         productos.push(nuevoProducto);
-        persistencia.guardar(productos);
+        //persistencia.guardar(productos);
         return productos.find(e => e.id == proxIdProducto)
     }
     actualizar(idProducto, productoActualizado){ //No actualiza timestamp
@@ -27,7 +27,7 @@ class Producto {
         }
         let idActualizado = productos.findIndex(e => e.id == idProducto)
         Object.assign(productos[idActualizado], productoActualizado) 
-        persistencia.guardar(productos);
+        //persistencia.guardar(productos);
         return productos[idActualizado];
     }
     borrar(idProducto){
@@ -36,7 +36,7 @@ class Producto {
         }
         let idBorrado = productos.findIndex(e => e.id == idProducto)
         let productoBorrado = productos.splice(idBorrado,1)
-        persistencia.guardar(productos);
+        //persistencia.guardar(productos);
         return productoBorrado;
     }
 }
