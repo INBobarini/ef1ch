@@ -3,19 +3,21 @@ const express = require ('express');
 
 const routerProductos = require('./routes/routesProductos.js')
 const routerCarritos = require('./routes/routesCarritos.js')
+const routerMensajes = require('./routes/routesMensajes.js')
 const app = express();
-
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
+
 app.use('/api/productos', routerProductos)
 app.use('/api/carrito', routerCarritos)
+app.use('/mensajes', routerMensajes)
 
-const administrador = true;// TO DO: meter en rutas
+app.use((err,req,res,next)=>{
+   console.error(err.message);
+   res.status(500).send(err);
+})
 
-//.env (import de afterclass)
-//admin, ver slack
 
-//subir a glitch
 
 const PORT = process.env.PORT||8080
 const server = app.listen(PORT, () => { 

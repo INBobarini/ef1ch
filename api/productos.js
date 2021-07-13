@@ -1,47 +1,75 @@
-let proxIdProducto = 0;
-const persistencia = require('../persistencia/persistencia') 
-let productos = []//persistencia.leer();
+var persistencia = require('../persistencia/dbproductos')
+
 class Producto {
-    
-    constructor(){
+     constructor(){
+        this.productos = [];
     }
-    listar(idProducto){
-        if (productos.length === 0){
-            return {error:"no hay productos cargados"}
+    async listar(id){
+        try{
+            this.productos = await persistencia.listarProductos()//carga en memoria
+            
+            if (this.productos.length === 0){
+                return {error:"no hay productos cargados"}
+            }
+            if(id==0){
+                return this.productos
+            }
+            else{
+                return this.productos.find(e=>e.id==id)
+            }
         }
-        return productos.find(e => e.id == idProducto)||productos;
+        catch(err){
+            throw err
+        }
     }
-    agregar(producto){
-        let nuevoProducto = {
-        id: ++proxIdProducto, 
-        timestamp: Date.now(),
+    async agregar(nuevoProducto){
+        try{
+            nuevoProducto.timestamp = Date.now();
+            let id = await persistencia.agregarProducto(nuevoProducto)
+            let resultado = await this.listar(id)
+            return resultado
         }
-        Object.assign(nuevoProducto, producto);
-        productos.push(nuevoProducto);
-        //persistencia.guardar(productos);
-        return productos.find(e => e.id == proxIdProducto)
+        catch(err){
+            throw err
+        }
     }
-    actualizar(idProducto, productoActualizado){ //No actualiza timestamp
-        if(productos.find(e => e.id == idProducto)=="undefined"){
-            return {error: "producto no encontrado"}
+    async actualizar(idProducto, productoActualizado){ //No actualiza timestamp
+        try{
+            let ok = await persistencia.actualizarProducto(idProducto, productoActualizado)
+            if(!ok){
+                return {error:"producto no encontrado"}
+            } 
+            else {
+                productoActualizado.id = idProducto 
+                return productoActualizado
+            }
         }
-        let idActualizado = productos.findIndex(e => e.id == idProducto)
-        Object.assign(productos[idActualizado], productoActualizado) 
-        //persistencia.guardar(productos);
-        return productos[idActualizado];
+        catch(err){
+            throw err
+        }
     }
-    borrar(idProducto){
-        if(productos.find(e => e.id == idProducto)=="undefined"){
-            return {error: "producto no encontrado"}
+    async borrar(idProducto){
+        try{
+            let listado = await persistencia.listarProductos()
+            let productoBorrado = listado.find(e=>e.id==idProducto);
+            let ok = await persistencia.borrarProducto(idProducto);
+            if(!ok){
+                return {error:"producto no encontrado"}
+            } 
+            else {
+                return productoBorrado
+            }
         }
-        let idBorrado = productos.findIndex(e => e.id == idProducto)
-        let productoBorrado = productos.splice(idBorrado,1)
-        //persistencia.guardar(productos);
-        return productoBorrado;
+        catch(err){
+            throw err
+        }
     }
 }
-var listado = new Producto;
-module.exports = listado; 
+productos = new Producto;
+productos.productos = persistencia.listarProductos(); //carga los productos en memoria para que esten listos antes de recibir requests, no funciona si no hay tabla
+module.exports = productos
+ 
+
 
 /*
 El router base '/productos' implementará cuatro rutas:

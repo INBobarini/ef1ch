@@ -1,8 +1,0 @@
-[{
-"nombre":"goma", 
-"descripcion":"mide", 
-"codigo":"e424", 
-"foto":"url", 
-"precio":70,
-"stock": 10
-}]
