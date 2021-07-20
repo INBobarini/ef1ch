@@ -1,0 +1,63 @@
+//Consigna: Utilizando Mongo Shell, crear una base de datos llamada ecommerce que contenga dos colecciones: mensajes y productos.
+use ecommerce 
+//Agregar 10 documentos con valores distintos a las colecciones ‘mensajes’ y ‘productos’. El formato de los documentos debe estar en correspondencia con el que venimos utilizando en el entregable con base de datos MariaDB.
+//Definir las claves de los documentos en relación a los campos de las tablas de esa base. En el caso de los productos, poner valores al campo precio entre los 100 y 5000 pesos
+//(eligiendo valores intermedios, ej: 120, 580, 900, 1280, 1700, 2300, 2860, 3350, 4320, 4990). 
+db.productos.insert([
+    {nombre:"goma",descripcion:"borra",codigo:"a45",foto:"url",precio:120,timestamp:"17-11-20 10:45:39"},
+    {nombre:"sacapuntas",descripcion:"saca punta",codigo:"a55",foto:"url",precio:580,timestamp:"10-04-19 15:42:31"},
+    {nombre:"regla",descripcion:"mide",codigo:"e25",foto:"url",precio:900,timestamp:"21-05-20 09:04:26"},
+    {nombre:"plasticola",descripcion:"pega",codigo:"e32",foto:"url",precio:1280,timestamp:"12-11-19 12:01:02"},
+    {nombre:"resma",descripcion:"a4",codigo:"f36",foto:"url",precio:1700,timestamp:"02-08-19 13:31:59"},
+    {nombre:"lapicera",descripcion:"escribe",codigo:"a31",foto:"url",precio:2300,timestamp:"14-01-20 14:55:41"},
+    {nombre:"corrector",descripcion:"corrige",codigo:"a32",foto:"url",precio:2860,timestamp:"30-10-19 08:15:09"},
+    {nombre:"lapiz",descripcion:"escribe",codigo:"a30",foto:"url",precio:3350,timestamp:"22-02-20 08:21:37"},
+    {nombre:"tablero",descripcion:"a3",codigo:"e36",foto:"url",precio:4320,timestamp:"26-08-19 09:44:45"},
+    {nombre:"brillantina",descripcion:"brilla",codigo:"a12",foto:"url",precio:4560,timestamp:"05-09-18 10:58:56"},
+    {nombre:"cartuchera",descripcion:"ben10",codigo:"e15",foto:"url",precio:4990,timestamp:"12-07-18 10:35:05"},
+    ])
+db.mensajes.insert([
+    {email:"claudioFer12@gmail.com",fechayhora:"23/04/19 12:15:00",mensaje:"No tengo internet!!"},
+    {email:"claudioFer12@gmail.com",fechayhora:"23/04/19 12:15:00",mensaje:"No tengo internet!!"},
+    {email:"claudioFer12@gmail.com",fechayhora:"23/04/19 12:15:01",mensaje:"No tengo internet!!"},
+    {email:"claudioFer12@gmail.com",fechayhora:"23/04/19 12:15:01",mensaje:"No tengo internet!!"},
+    {email:"claudioFer12@gmail.com",fechayhora:"23/04/19 12:15:01",mensaje:"No tengo internet!!"},
+    {email:"claudioFer12@gmail.com",fechayhora:"23/04/19 12:15:02",mensaje:"No tengo internet!!"},
+    {email:"claudioFer12@gmail.com",fechayhora:"23/04/19 12:15:02",mensaje:"No tengo internet!!"},
+    {email:"claudioFer12@gmail.com",fechayhora:"23/04/19 12:15:02",mensaje:"No tengo internet!!"},
+    {email:"claudioFer12@gmail.com",fechayhora:"23/04/19 12:15:03",mensaje:"No tengo internet!!"},
+    {email:"claudioFer12@gmail.com",fechayhora:"23/04/19 12:15:04",mensaje:"No tengo internet!!"}
+])
+//Listar todos los documentos en cada colección.
+db.productos.find();
+db.mensajes.find();
+//Mostrar la cantidad de documentos almacenados en cada una de ellas.
+db.productos.count() 
+db.mensajes.find(); 
+//Realizar un CRUD sobre la colección de productos:
+    //Agregar un producto más en la colección de productos 
+    db.productos.insert({nombre:"cuaderno",descripcion:"rivadavia",codigo:"c19",foto:"url",precio:650,timestamp:"12-12-18 14:09:26"})
+    //Realizar una consulta por nombre de producto específico:
+        //Listar los productos con precio menor a 1000 pesos.
+        db.productos.find({precio: {$lt: 1000}})
+        //Listar los productos con precio entre los 1000 a 3000 pesos.
+        db.productos.find({$and: [{precio: {$gte:1000}},{precio:{$lte: 3000}}]})
+        //Listar los productos con precio mayor a 3000 pesos.
+        db.productos.find({precio: {$gt: 3000}})
+        //Realizar una consulta que traiga sólo el nombre del tercer producto más barato.
+        db.productos.find().skip(2).limit(1).sort({precio:1})
+    //Hacer una actualización sobre todos los productos, agregando el campo stock a todos ellos con un valor de 100.
+    db.productos.updateMany({},{$set:{stock:100}})
+    //Cambiar el stock a cero de los productos con precios mayores a 4000 pesos. 
+    db.productos.updateMany({precio:{$gt:4000}},{$set:{stock:0}})
+    //Borrar los productos con precio menor a 1000 pesos 
+    db.productos.deleteMany({precio:{$lt:1000}})
+//Crear un usuario 'pepe' clave: 'asd456' que sólo pueda leer la base de datos ecommerce. Verificar que pepe no pueda cambiar la información.
+use admin 
+db.createUser({
+    user:"pepe",
+    pwd:"asd456",
+    roles:[
+        {role:"read",db:"ecommerce"}
+    ]
+})

@@ -1,17 +1,18 @@
 const express = require('express')
-var mensajes = require('../persistencia/dbmensajes') //no tiene controller
+var mensajes = require('../api/mensajes') 
+
+const mongoose = require ('mongoose');
 
 routerMensajes = express.Router();
 
-mensajes.iniciarTablaMensajes();
 
 routerMensajes.get('/', async(req, res) => {  
     let resultado = await mensajes.leer()
     res.json(resultado)
 })
 routerMensajes.post('/', async(req, res) => {
-    let id = await mensajes.guardar(req.body)
-    res.json(`Mensaje con id:${id} guardado`)
+    let resultado = await mensajes.guardar(req.body)
+    res.json(resultado)
 })
 
 module.exports = routerMensajes

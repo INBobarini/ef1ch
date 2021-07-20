@@ -1,4 +1,7 @@
 var persistencia = require('../persistencia/dbproductos')
+const model = require ('../persistencia/modelProducto')
+const mongoose = require ('mongoose');
+
 
 class Producto {
      constructor(){
@@ -6,8 +9,7 @@ class Producto {
     }
     async listar(id){
         try{
-            this.productos = await persistencia.listarProductos()//carga en memoria
-            
+            this.productos = await model.productos.find({})
             if (this.productos.length === 0){
                 return {error:"no hay productos cargados"}
             }
@@ -15,7 +17,7 @@ class Producto {
                 return this.productos
             }
             else{
-                return this.productos.find(e=>e.id==id)
+                return this.productos[id-1]
             }
         }
         catch(err){
@@ -24,24 +26,23 @@ class Producto {
     }
     async agregar(nuevoProducto){
         try{
-            nuevoProducto.timestamp = Date.now();
-            let id = await persistencia.agregarProducto(nuevoProducto)
-            let resultado = await this.listar(id)
-            return resultado
+            let productoGuardado = await model.productos.create(nuevoProducto)
+            return productoGuardado
         }
         catch(err){
             throw err
         }
     }
-    async actualizar(idProducto, productoActualizado){ //No actualiza timestamp
+    async actualizar(idProducto, producto){
         try{
-            let ok = await persistencia.actualizarProducto(idProducto, productoActualizado)
-            if(!ok){
+            this.productos = await model.productos.find({})
+            if(idProducto>this.productos.length){
                 return {error:"producto no encontrado"}
-            } 
-            else {
-                productoActualizado.id = idProducto 
-                return productoActualizado
+            }
+            else{
+                let id = this.productos[idProducto-1]._id;
+                let resultado = await model.productos.updateOne({_id:id}, {$set: producto})
+                return resultado
             }
         }
         catch(err){
@@ -50,14 +51,14 @@ class Producto {
     }
     async borrar(idProducto){
         try{
-            let listado = await persistencia.listarProductos()
-            let productoBorrado = listado.find(e=>e.id==idProducto);
-            let ok = await persistencia.borrarProducto(idProducto);
-            if(!ok){
+            this.productos = await model.productos.find({})
+            if(idProducto>this.productos.length){
                 return {error:"producto no encontrado"}
-            } 
-            else {
-                return productoBorrado
+            }
+            else{
+                let id = this.productos[idProducto-1]._id;
+                let resultado = await model.productos.deleteOne({_id:id})
+                return resultado
             }
         }
         catch(err){
@@ -65,11 +66,12 @@ class Producto {
         }
     }
 }
+
 productos = new Producto;
-productos.productos = persistencia.listarProductos(); //carga los productos en memoria para que esten listos antes de recibir requests, no funciona si no hay tabla
+
 module.exports = productos
  
-
+//console.log(await model.productos.find({descripcion:"borra"},{nombre:1,precio:1,stock:1,_id:0}).limit(2))
 
 /*
 El router base '/productos' implementará cuatro rutas:

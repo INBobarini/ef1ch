@@ -1,0 +1,64 @@
+// escribir en la consola de su sistema operativo el comando "mongo"
+
+// muestra las bases de datos
+show dbs;
+
+// selecciona la base de datos a utilizar, si no existe la crea
+use prueba
+
+// muestra la lista de colecciones de la base
+show collections
+
+// crea una coleccion de manera implicita e inserta un documento
+db.personas.insert({clave: valor})
+
+// busca todos los documentos de la coleccion persona
+db.personas.find()
+
+/*
+1) Crear una base de datos llamada 'prueba'
+use prueba
+/*2) Crear una tabla dentro de esa base con el nombre 'items' que contenga los siguientes campos:
+    - 'nombre' del tipo varchar no nulo
+    - 'categoria' del tipo varchar no nulo
+    - 'stock' del tipo entero sin signo
+    - 'id' clave primaria autoincremental no nula
+*/
+//No pude insertar nada despues de setear el validador 
+db.createCollection( "items")
+db.runCommand( {
+   collMod: "items",
+   validator: { $jsonSchema: {
+      bsonType: "object",
+      required: [ "nombre", "categoria", "stock" ],
+      properties: {
+         nombre: {
+            bsonType: "string",
+            description: "must be a string and is required"
+         },
+         categoria: {
+            bsonType: "string",
+            description: "must be a string and is required"
+         },
+         stock: {
+            bsonType: "int",
+            description: "must be an unsigned int and is required"
+         }
+      }
+   } },
+   validationLevel: "moderate"
+})
+
+/*3) Insertar estos 3 items en esa tabla
+    - Fideos categoría:Harina stock:20 
+    - Leche categoría:Lácteos stock:30
+    - Crema categoría:Lácteos stock:15
+    */
+db.items.insertMany([
+    {nombre:"Fideos", categoria:"Harina", stock:20},
+    {nombre:"Leche", categoria:"Lacteos", stock:30},
+    {nombre:"Crema", categoria:"Lacteos", stock:15}
+])
+
+//4) Listar los items agregados
+db.items.find().pretty()
