@@ -1,5 +1,6 @@
-const persistencia = require('../persistencia/persistencia') //listado es un array, instancia de clase Producto
+//const persistencia = require('../persistencia/persMensFS') //listado es un array, instancia de clase Producto
 //const listado = persistencia.leer('../persistencia/productos.txt');
+
 let proxIdCarrito = 0;
 const carritos = [];
 

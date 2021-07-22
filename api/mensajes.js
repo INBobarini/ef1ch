@@ -1,16 +1,17 @@
-const model = require ('../persistencia/modelMensaje')
-const mongoose = require ('mongoose');
+const persPath = require('../persistencia/factory')
+const moduloPersistencia = require (persPath)
+const persistencia = moduloPersistencia.mensajes
 
 class Mensaje {
     constructor(){
 
     }
     leer(){
-        let resultado = model.mensajes.find({})
+        let resultado = persistencia.leer()
         return resultado
     }
     guardar(mensaje){
-        let resultado = model.mensajes.create(mensaje)
+        let resultado = persistencia.guardar(mensaje)
         return resultado
     }
 }

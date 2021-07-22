@@ -1,7 +1,6 @@
 const express = require('express')
 const carrito = require('../api/carritos')
 
-
 routerCarrito = express.Router();
 
 routerCarrito.get('/', (req, res) => {

@@ -1,24 +1,15 @@
-var persistencia = require('../persistencia/dbproductos')
-const model = require ('../persistencia/modelProducto')
-const mongoose = require ('mongoose');
-
+const persPath = require('../persistencia/factory')
+const moduloPersistencia = require (persPath)
+const persistencia = moduloPersistencia.productos
 
 class Producto {
-     constructor(){
-        this.productos = [];
+    constructor(){
+        this.productos = []
     }
     async listar(id){
         try{
-            this.productos = await model.productos.find({})
-            if (this.productos.length === 0){
-                return {error:"no hay productos cargados"}
-            }
-            if(id==0){
-                return this.productos
-            }
-            else{
-                return this.productos[id-1]
-            }
+            let resultado = await persistencia.listar(id)
+            return resultado
         }
         catch(err){
             throw err
@@ -26,24 +17,18 @@ class Producto {
     }
     async agregar(nuevoProducto){
         try{
-            let productoGuardado = await model.productos.create(nuevoProducto)
+            let productoGuardado = await persistencia.agregar(nuevoProducto)
             return productoGuardado
         }
         catch(err){
             throw err
         }
     }
-    async actualizar(idProducto, producto){
+    async actualizar(idProducto, productoNuevo){
         try{
-            this.productos = await model.productos.find({})
-            if(idProducto>this.productos.length){
-                return {error:"producto no encontrado"}
-            }
-            else{
-                let id = this.productos[idProducto-1]._id;
-                let resultado = await model.productos.updateOne({_id:id}, {$set: producto})
-                return resultado
-            }
+            let productoViejo = await persistencia.listar(idProducto)
+            let resultado = await persistencia.actualizar(productoNuevo, productoViejo)
+            return resultado
         }
         catch(err){
             throw err
@@ -51,15 +36,9 @@ class Producto {
     }
     async borrar(idProducto){
         try{
-            this.productos = await model.productos.find({})
-            if(idProducto>this.productos.length){
-                return {error:"producto no encontrado"}
-            }
-            else{
-                let id = this.productos[idProducto-1]._id;
-                let resultado = await model.productos.deleteOne({_id:id})
-                return resultado
-            }
+            let productoBorrado = await persistencia.listar(idProducto)
+            let resultado = await persistencia.borrar(productoBorrado)
+            return resultado
         }
         catch(err){
             throw err
